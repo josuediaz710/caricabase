@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#214b36">
+  <meta name="description" content="Base de datos de demostración editable para registrar información de ensayos de deshidratación de papaya.">
+  <title>Base de datos de papaya | CaricaBase</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="database-page">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="CaricaBase, inicio">
+      <img class="brand-logo" src="Gemini_Generated_Image_nxl37tnxl37tnxl3.jpg" alt="">
+      <span class="brand-copy"><strong>CaricaBase</strong><small>Proyecto estudiantil · Papaya</small></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menú</button>
+    <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal">
+      <a href="index.html">Presentación</a>
+      <a class="active" href="database.html" aria-current="page">Base de datos</a>
+    </nav>
+  </header>
+
+  <main id="contenido" class="database-main">
+    <div class="database-heading">
+      <div><p class="eyebrow"><span class="eyebrow-dot"></span> Base de datos del proyecto</p><h1>Registro de <em>deshidratación.</em></h1><p class="database-lede">Organiza preparaciones, variedades, equipos, experimentos, muestras y mediciones.</p></div>
+      <a class="back-link" href="index.html"><span aria-hidden="true">←</span> Volver a la presentación</a>
+    </div>
+    <div class="local-notice" role="note"><span class="notice-symbol" aria-hidden="true">i</span><p><strong>Demostración local</strong> — puedes crear y editar tablas, columnas y registros. Los cambios se guardan en el almacenamiento local (localStorage) de este navegador y dispositivo; no existe un servidor multiusuario ni sincronización en línea.</p></div>
+    <div class="database-workspace">
+      <aside class="table-sidebar" aria-label="Tablas de la base de datos">
+        <div class="sidebar-title"><div><p class="eyebrow">Proyecto papaya</p><h2>Tablas</h2></div><button class="icon-button" type="button" data-action="create-table" aria-label="Crear tabla">+</button></div>
+        <p class="sidebar-description">Selecciona una tabla para ver sus registros.</p>
+        <div class="table-list" id="table-list" role="list" aria-label="Tablas"></div>
+        <button class="sidebar-create" type="button" data-action="create-table">＋ Crear una tabla</button>
+        <div class="sidebar-help"><span aria-hidden="true">✳</span><p>Agrega la información obtenida en cada ensayo. Evita registrar parámetros no medidos.</p></div>
+      </aside>
+      <section class="table-panel" aria-labelledby="active-table-title">
+        <div class="table-panel-header">
+          <div class="table-title-block">
+            <p class="eyebrow">Tabla seleccionada</p>
+            <div class="table-title-row"><h2 id="active-table-title">Cargando…</h2><span class="row-count" id="row-count"></span></div>
+            <p class="table-subtitle" id="table-subtitle"></p>
+          </div>
+          <div class="table-heading-actions">
+            <button class="row-action" type="button" data-action="rename-table">Renombrar</button>
+            <button class="row-action delete" type="button" data-action="delete-table">Eliminar tabla</button>
+          </div>
+        </div>
+        <div class="table-toolbar">
+          <div class="toolbar-actions">
+            <button class="button button-primary button-small" type="button" data-action="create-record">＋ Agregar registro</button>
+            <button class="button button-quiet button-small" type="button" data-action="manage-columns">Columnas</button>
+          </div>
+          <label class="search-box"><span aria-hidden="true">⌕</span><input id="table-search" type="search" placeholder="Buscar en esta tabla" aria-label="Buscar registros en la tabla"></label>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="data-table"></table>
+        </div>
+        <p class="storage-status" id="storage-status" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+    <section class="database-model" aria-labelledby="database-model-title">
+      <div class="academic-section-heading">
+        <p class="eyebrow">Guía para el diseño futuro</p>
+        <h2 id="database-model-title">Datos que se propone organizar</h2>
+      </div>
+      <p class="database-model-intro">La estructura inicial se basa en los campos del proyecto. Puedes modificarla y agregar entidades según las necesidades de los ensayos.</p>
+      <div class="database-model-entities">
+        <article><h3>Fruta y variedad</h3><p>Nombre, clasificación, variedad y color predominante.</p></article>
+        <article><h3>Preparación</h3><p>Cantidad y peso inicial de la fruta, merma, pelado, tipo de corte y tratamiento previo.</p></article>
+        <article><h3>Equipo</h3><p>Tipo de máquina, marca, modelo, capacidad y características relevantes para el ensayo.</p></article>
+        <article><h3>Experimento</h3><p>Fecha, horas de inicio y finalización, condiciones de trabajo y observaciones.</p></article>
+        <article><h3>Muestra</h3><p>Estado y madurez del fruto, fecha de preparación y peso inicial.</p></article>
+        <article><h3>Mediciones</h3><p>Hora de medición, tiempo transcurrido y peso registrado durante cada prueba.</p></article>
+      </div>
+    </section>
+    <dialog class="app-dialog" id="edit-dialog" aria-labelledby="dialog-title"></dialog>
+    <dialog class="app-dialog columns-dialog" id="columns-dialog" aria-labelledby="columns-title"></dialog>
+  </main>
+  <footer class="site-footer">
+    <a class="brand brand-footer" href="index.html"><img class="brand-logo" src="Gemini_Generated_Image_nxl37tnxl37tnxl3.jpg" alt=""><span class="brand-copy"><strong>CaricaBase</strong><small>Proyecto estudiantil · Papaya</small></span></a>
+    <p>Demostración local · Datos guardados en este navegador.</p>
+    <a href="index.html">Volver a la presentación <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>
