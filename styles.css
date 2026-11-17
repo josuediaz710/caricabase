@@ -189,7 +189,7 @@ h1 em, h2 em { color: #56725e; font-weight: 500; }
 .button-light:hover { background: #fff; }
 .banner-seed { position: absolute; right: 5%; bottom: 12px; color: rgba(255,255,255,.11); font-family: var(--serif); font-size: clamp(45px, 8vw, 98px); line-height: 1; letter-spacing: -.05em; }
 .site-footer { min-height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 15px max(6.6vw, 24px); background: #fbfcf8; }
-.brand-footer .brand-mark { width: 31px; height: 31px; font-size: 17px; }.brand-footer .brand-copy strong { font-size: 12px; }.brand-footer .brand-copy small { font-size: 9px; }
+.brand-footer .brand-logo { width: 44px; height: 38px; }.brand-footer .brand-copy strong { font-size: 12px; }.brand-footer .brand-copy small { font-size: 9px; }
 .site-footer > p { margin: 0; color: #59695e; font-size: 10px; }.site-footer > a:last-child { color: #405b48; font-size: 10px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .prototype-caption { margin: 12px 0 0; color: #5b6b5f; font-size: 9px; line-height: 1.55; }
@@ -800,6 +800,80 @@ figure.fruit-card:nth-child(n) {
   background: #fff;
   color: var(--ink);
   font-size: 12px;
+}
+
+/* Clearer academic hierarchy and easier-to-read database controls. */
+.site-header { border-bottom: 1px solid #e8e7df; }
+.brand-copy strong { color: #23392d; }
+.academic-hero { background: #f0ede4; }
+.academic-hero h1 { max-width: 700px; font-size: clamp(40px, 4.2vw, 58px); line-height: 1.16; }
+.academic-hero-copy > p:not(.eyebrow) { color: #414b44; }
+.academic-actions .button { min-height: 48px; border-radius: 6px; font-size: 13px; }
+.academic-actions .text-link { font-size: 14px; }
+.academic-section-heading h2,
+.academic-database-link h2 { line-height: 1.2; }
+.academic-details h3 { font-size: 17px; }
+.academic-details p,
+.academic-team-list li { font-size: 15px; }
+.project-visual-gallery img { border-radius: 38px 38px 6px 6px; }
+.database-main { max-width: 1420px; margin: 0 auto; }
+.database-heading h1 { font-size: clamp(40px, 4.2vw, 54px); line-height: 1.12; }
+.database-lede { font-size: 15px; }
+.back-link { font-size: 13px; }
+.local-notice { border-left: 3px solid #c18b43; border-radius: 5px; }
+.database-page .local-notice p { font-size: 13px; }
+.database-workspace { overflow: hidden; border-color: #e1e6de; border-radius: 10px; box-shadow: 0 12px 32px rgba(32,55,39,.06); }
+.table-sidebar { padding: 24px 17px; background: #f8f9f6; }
+.sidebar-title h2 { font-size: 26px; }
+.sidebar-description { font-size: 13px; line-height: 1.6; }
+.table-nav-item { min-height: 42px; border-radius: 6px; font-size: 13px; }
+.table-count { font-size: 11px; }
+.sidebar-create { min-height: 40px; font-size: 12px; }
+.table-panel { padding: 28px; }
+.table-title-block .eyebrow { font-size: 10px; }
+.table-title-row h2 { font-size: 30px; }
+.row-count { font-size: 11px; }
+.table-subtitle { font-size: 13px; }
+.button-small { min-height: 40px; border-radius: 6px; font-size: 12px; }
+.search-box input { height: 40px; border-radius: 6px; font-size: 13px; }
+.data-table th { font-size: 11px; }
+.data-table td { font-size: 13px; }
+.row-action { font-size: 12px; }
+.storage-status { font-size: 12px; }
+.database-model-entities h3 { font-size: 15px; }
+.database-model-entities p { font-size: 13px; }
+.form-field { font-size: 12px; }
+.form-field input,
+.form-field select,
+.form-field textarea { font-size: 13px; }
+.dialog-heading h2 { font-size: 28px; }
+
+@media (max-width: 900px) {
+  .database-main { padding-right: 5vw; padding-left: 5vw; }
+  .table-panel { padding: 24px 20px; }
+}
+@media (max-width: 760px) {
+  .database-workspace { border-radius: 9px; }
+  .table-sidebar { padding: 18px; }
+  .table-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .table-nav-item { min-width: 0; gap: 7px; padding: 8px; white-space: nowrap; }
+  .table-nav-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .table-count { flex: 0 0 auto; }
+  .sidebar-create { margin-top: 10px; }
+}
+@media (max-width: 650px) {
+  .database-main { padding: 32px 16px 52px; }
+  .database-heading h1 { font-size: clamp(36px, 9vw, 42px); }
+  .local-notice p { font-size: 12px; }
+  .table-sidebar { padding: 16px; }
+  .table-nav-item { font-size: 12px; }
+  .table-panel { padding: 20px 14px; }
+  .table-title-row h2 { font-size: 26px; }
+  .data-table th { font-size: 10px; }
+  .data-table td { font-size: 12px; }
+  .academic-hero h1 { font-size: clamp(35px, 8.5vw, 43px); }
+  .academic-details p,
+  .academic-team-list li { font-size: 14px; }
 }
 @media (max-width: 900px) {
   .database-intro { padding-right: 7vw; padding-left: 7vw; }
