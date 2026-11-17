@@ -4,10 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#214b36">
-  <meta name="description" content="Base de datos de demostración editable para registrar información de ensayos de deshidratación de papaya.">
+  <meta name="description" content="Base de datos compartida para registrar ensayos de deshidratación de papaya.">
   <title>Base de datos de papaya | CaricaBase</title>
-  <link rel="stylesheet" href="styles.css?v=3">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="supabase-config.js?v=1" defer></script>
+  <script src="app.js?v=5" defer></script>
 </head>
 <body class="database-page">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -28,8 +30,29 @@
       <div><p class="eyebrow"><span class="eyebrow-dot"></span> Base de datos del proyecto</p><h1>Registro de <em>deshidratación.</em></h1><p class="database-lede">Organiza preparaciones, variedades, equipos, experimentos, muestras y mediciones.</p></div>
       <a class="back-link" href="index.html"><span aria-hidden="true">←</span> Volver a la presentación</a>
     </div>
-    <div class="local-notice" role="note"><span class="notice-symbol" aria-hidden="true">i</span><p><strong>Demostración local</strong> — puedes crear y editar tablas, columnas y registros. Los cambios se guardan en el almacenamiento local (localStorage) de este navegador y dispositivo; no existe un servidor multiusuario ni sincronización en línea.</p></div>
-    <div class="database-workspace">
+    <div class="local-notice" role="note"><span class="notice-symbol" aria-hidden="true">i</span><p><strong>Base de datos compartida</strong> — inicia sesión para consultar y editar los datos del equipo, guardados en Supabase.</p></div>
+    <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title">
+      <div>
+        <p class="eyebrow">Acceso del equipo</p>
+        <h2 id="auth-title">Inicia sesión en CaricaBase</h2>
+        <p>Usa el correo y la contraseña que te asignó el administrador del proyecto.</p>
+      </div>
+      <form class="auth-form" id="login-form">
+        <label class="form-field" for="login-email">Correo electrónico
+          <input id="login-email" name="email" type="email" autocomplete="username" required>
+        </label>
+        <label class="form-field" for="login-password">Contraseña
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="button button-primary" type="submit">Iniciar sesión</button>
+        <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    <div class="account-bar" id="account-bar" hidden>
+      <span>Sesión del equipo: <strong id="account-email"></strong></span>
+      <button class="button button-quiet button-small" id="logout-button" type="button">Cerrar sesión</button>
+    </div>
+    <div class="database-workspace" hidden>
       <aside class="table-sidebar" aria-label="Tablas de la base de datos">
         <div class="sidebar-title"><div><p class="eyebrow">Proyecto papaya</p><h2>Tablas</h2></div><button class="icon-button" type="button" data-action="create-table" aria-label="Crear tabla">+</button></div>
         <p class="sidebar-description">Selecciona una tabla para ver sus registros.</p>
@@ -62,7 +85,7 @@
         <p class="storage-status" id="storage-status" role="status" aria-live="polite"></p>
       </section>
     </div>
-    <section class="database-model" aria-labelledby="database-model-title">
+    <section class="database-model" aria-labelledby="database-model-title" hidden>
       <div class="academic-section-heading">
         <p class="eyebrow">Guía para el diseño futuro</p>
         <h2 id="database-model-title">Datos que se propone organizar</h2>
@@ -82,7 +105,7 @@
   </main>
   <footer class="site-footer">
     <a class="brand brand-footer" href="index.html"><img class="brand-logo" src="Gemini_Generated_Image_nxl37tnxl37tnxl3.jpg" alt=""><span class="brand-copy"><strong>CaricaBase</strong><small>Proyecto estudiantil · Papaya</small></span></a>
-    <p>Demostración local · Datos guardados en este navegador.</p>
+    <p>Base de datos compartida · Supabase</p>
     <a href="index.html">Volver a la presentación <span aria-hidden="true">↗</span></a>
   </footer>
 </body>

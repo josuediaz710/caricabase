@@ -50,7 +50,6 @@
   const databasePage = document.querySelector(".database-page");
   if (!databasePage) return;
 
-  const storageKey = "semilla-sazon-papaya-database-v1";
   const tableList = document.getElementById("table-list");
   const dataTable = document.getElementById("data-table");
   const tableTitle = document.getElementById("active-table-title");
@@ -60,6 +59,19 @@
   const storageStatus = document.getElementById("storage-status");
   const editDialog = document.getElementById("edit-dialog");
   const columnsDialog = document.getElementById("columns-dialog");
+  const authPanel = document.getElementById("auth-panel");
+  const loginForm = document.getElementById("login-form");
+  const authStatus = document.getElementById("auth-status");
+  const accountBar = document.getElementById("account-bar");
+  const accountEmail = document.getElementById("account-email");
+  const logoutButton = document.getElementById("logout-button");
+  const workspace = document.querySelector(".database-workspace");
+  const databaseModel = document.querySelector(".database-model");
+
+  const supabaseConfig = window.CARICABASE_SUPABASE_CONFIG;
+  const supabaseClient = window.supabase && supabaseConfig
+    ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey)
+    : null;
 
   const makeColumns = (fields) => fields.map(([id, name, type]) => ({ id, name, type }));
   const makeTable = (id, name, fields, rows = []) => ({
@@ -162,19 +174,9 @@
     ));
 
   let state = createDefaultState();
-  let loadError = "";
-  try {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (!validState(parsed)) throw new Error("El formato guardado no es válido.");
-      state = parsed;
-    } else {
-      localStorage.setItem(storageKey, JSON.stringify(state));
-    }
-  } catch (error) {
-    loadError = error instanceof Error ? error.message : "Error desconocido.";
-  }
+  let cloudVersion = null;
+  let saveBlocked = false;
+  let saveQueue = Promise.resolve();
 
   const getActiveTable = () => state.tables.find((table) => table.id === state.activeTableId);
 
@@ -183,15 +185,107 @@
     storageStatus.classList.toggle("error", isError);
   };
 
+  const setAuthStatus = (message, isError = false) => {
+    authStatus.textContent = message;
+    authStatus.classList.toggle("error", isError);
+  };
+
   const persist = () => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(state));
-      setStatus("Cambios guardados en este navegador.");
-      return true;
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : "Error desconocido.";
-      setStatus(`No se pudieron guardar los cambios en este navegador. ${detail}`, true);
+    if (!supabaseClient || cloudVersion === null) {
+      setStatus("Inicia sesión para guardar los cambios.", true);
       return false;
+    }
+
+    const snapshot = JSON.parse(JSON.stringify(state));
+    saveQueue = saveQueue.then(async () => {
+      if (saveBlocked) return;
+      setStatus("Sincronizando cambios con Supabase…");
+      const { data, error } = await supabaseClient.rpc("save_caricabase_state", {
+        p_payload: snapshot,
+        p_expected_version: cloudVersion,
+      });
+      if (error) throw error;
+      if (data === null || data === undefined) {
+        saveBlocked = true;
+        setStatus("Otra persona guardó cambios primero. Recarga la página antes de seguir editando.", true);
+        return;
+      }
+
+      cloudVersion = Number(data);
+      if (!Number.isSafeInteger(cloudVersion)) {
+        saveBlocked = true;
+        throw new Error("Supabase devolvió una versión de datos no válida.");
+      }
+      setStatus("Cambios guardados y compartidos con el equipo.");
+    }).catch((error) => {
+      saveBlocked = true;
+      const detail = error instanceof Error ? error.message : "Error desconocido.";
+      setStatus(`No se pudieron guardar los cambios en Supabase. ${detail}`, true);
+    });
+    return true;
+  };
+
+  const showDatabase = (visible) => {
+    authPanel.hidden = visible;
+    accountBar.hidden = !visible;
+    workspace.hidden = !visible;
+    databaseModel.hidden = !visible;
+  };
+
+  const loadSharedState = async (user) => {
+    accountEmail.textContent = user.email || "Usuario del equipo";
+    accountBar.hidden = false;
+    setAuthStatus("Cargando los datos compartidos…");
+    const { data, error } = await supabaseClient
+      .from("caricabase_state")
+      .select("payload, version")
+      .eq("singleton", true)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) {
+      throw new Error("No existe el estado inicial. Ejecuta supabase-schema.sql en Supabase SQL Editor.");
+    }
+    if (!validState(data.payload)) {
+      throw new Error("El estado compartido no tiene el formato esperado.");
+    }
+
+    state = data.payload;
+    if (!state.tables.some((table) => table.id === state.activeTableId)) {
+      state.activeTableId = state.tables[0] ? state.tables[0].id : "";
+    }
+    cloudVersion = Number(data.version);
+    if (!Number.isSafeInteger(cloudVersion)) {
+      throw new Error("La versión del estado compartido no es válida.");
+    }
+    saveBlocked = false;
+    showDatabase(true);
+    render();
+    setAuthStatus("");
+    setStatus("Datos cargados desde Supabase.");
+  };
+
+  const initializeCloud = async () => {
+    showDatabase(false);
+    if (!supabaseClient) {
+      setAuthStatus("No se pudo iniciar Supabase. Revisa la configuración y vuelve a cargar la página.", true);
+      return;
+    }
+
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) {
+      setAuthStatus(`No se pudo comprobar la sesión. ${error.message}`, true);
+      return;
+    }
+    if (!data.session) {
+      setAuthStatus("Inicia sesión con la cuenta del equipo.");
+      return;
+    }
+
+    try {
+      await loadSharedState(data.session.user);
+    } catch (loadError) {
+      const detail = loadError instanceof Error ? loadError.message : "Error desconocido.";
+      setAuthStatus(`No se pudieron cargar los datos compartidos. ${detail}`, true);
     }
   };
 
@@ -612,10 +706,51 @@
     }
   });
 
-  render();
-  if (loadError) {
-    setStatus(`No se pudieron leer los datos guardados; se muestran datos iniciales. ${loadError}`, true);
-  } else {
-    setStatus("Cambios guardados en este navegador.");
-  }
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!loginForm.reportValidity() || !supabaseClient) return;
+    const submitButton = loginForm.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+    setAuthStatus("Verificando acceso…");
+    const formData = new FormData(loginForm);
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: String(formData.get("email")).trim(),
+      password: String(formData.get("password")),
+    });
+    if (error) {
+      setAuthStatus(`No se pudo iniciar sesión. ${error.message}`, true);
+      submitButton.disabled = false;
+      return;
+    }
+
+    try {
+      await loadSharedState(data.user);
+      loginForm.reset();
+    } catch (loadError) {
+      const detail = loadError instanceof Error ? loadError.message : "Error desconocido.";
+      setAuthStatus(`La sesión se inició, pero no se pudieron cargar los datos. ${detail}`, true);
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  logoutButton.addEventListener("click", async () => {
+    logoutButton.disabled = true;
+    const { error } = await supabaseClient.auth.signOut();
+    logoutButton.disabled = false;
+    if (error) {
+      setStatus(`No se pudo cerrar la sesión. ${error.message}`, true);
+      return;
+    }
+    cloudVersion = null;
+    saveBlocked = true;
+    state = createDefaultState();
+    searchInput.value = "";
+    showDatabase(false);
+    accountEmail.textContent = "";
+    setAuthStatus("Sesión cerrada.");
+    setStatus("");
+  });
+
+  void initializeCloud();
 })();
